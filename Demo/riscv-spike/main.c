@@ -139,7 +139,7 @@ void vApplicationIdleHook( void );
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName );
 /*-----------------------------------------------------------*/
 
-volatile int wait_for_debugger = 1;
+volatile int wait_for_debugger = 0;
 unsigned int mutexlock = 0;
 
 /*
@@ -156,7 +156,7 @@ void user_task( void *task )
 	unsigned long i = 0;
 	printf("\n Job in user task %d started\n", *num);
 
-	for (i = 0; i < (0x1FFFFF); i++);
+	for (i = 0; i < (0x1FFFFFF); i++);
 
 	printf("\n Job in user task %d finished\n", *num);
 	unlock_mutex(&mutexlock);
@@ -176,12 +176,13 @@ TimerHandle_t xCheckTimer = NULL;
 	vStartRecursiveMutexTasks();
 
 	printf("Hi Jungle! Welcome to FreeRTOS! \r\n");
-
+#if 0
 	// Switch to user mode.
-//	switch_to_user(UMODE);
-//	while(1)
-//	    for (int i = 0 ; i < 0xFFFFFFF ; i++);
-
+	switch_to_user(UMODE);
+	while(1)
+	    for (int i = 0 ; i < 0xFFFFFFF ; i++);
+#endif
+#if !USERTASK_EN
 	/* Create the software timer that performs the 'check' functionality,
 	as described at the top of this file. */
 	xCheckTimer = xTimerCreate( "CheckTimer",					/* A text name, purely to help debugging. */
@@ -190,7 +191,7 @@ TimerHandle_t xCheckTimer = NULL;
 								( void * ) 0,					/* The ID is not used, so can be set to anything. */
 								prvCheckTimerCallback			/* The callback function that inspects the status of all the other tasks. */
 							  );
-
+#endif
 	/* If the software timer was created successfully, start it.  It won't
 	actually start running until the scheduler starts.  A block time of
 	zero is used in this call, although any value could be used as the block
