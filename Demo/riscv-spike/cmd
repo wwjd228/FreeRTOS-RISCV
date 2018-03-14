@@ -1,0 +1,2 @@
+target remote :3333
+set wait_for_debugger = 0

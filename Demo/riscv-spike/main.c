@@ -139,7 +139,7 @@ void vApplicationIdleHook( void );
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName );
 /*-----------------------------------------------------------*/
 
-volatile int wait_for_debugger= 1;
+volatile int wait_for_debugger = 1;
 unsigned int mutexlock = 0;
 
 /*
@@ -149,13 +149,14 @@ unsigned int mutexlock = 0;
 void user_task( void *task )
 {
     int *num = (int *)task;
+
+    printf("User Task %d created.\n", *num);
     while(1) {
-	printf("User Task %d created.\n", *num);
 	lock_mutex(&mutexlock);
 	unsigned long i = 0;
 	printf("\n Job in user task %d started\n", *num);
 
-	for (i = 0; i < (0xFFFFF); i++);
+	for (i = 0; i < (0x1FFFFF); i++);
 
 	printf("\n Job in user task %d finished\n", *num);
 	unlock_mutex(&mutexlock);

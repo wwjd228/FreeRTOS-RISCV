@@ -100,7 +100,7 @@ INCLUDES = \
 CFLAGS = \
 	$(WARNINGS) $(INCLUDES) \
 	-fomit-frame-pointer -fno-strict-aliasing -fno-builtin \
-	-D__gracefulExit -mcmodel=medany #-fPIC
+	-D__gracefulExit -mcmodel=medany -g #-fPIC
 
 GCCVER 	= $(shell $(GCC) --version | grep gcc | cut -d" " -f9)
 
@@ -156,4 +156,4 @@ openocd:
 	openocd -f /home/junglec/shareFolder/openocd_spike.cfg
 
 debug:
-	$(DEBUG) $(PROG).elf
+	$(DEBUG) -x cmd $(PROG).elf
