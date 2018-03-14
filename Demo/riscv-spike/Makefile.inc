@@ -10,10 +10,11 @@ OBJCOPY	= $(TARGET)-objcopy
 OBJDUMP	= $(TARGET)-objdump
 AR		= $(TARGET)-ar
 RANLIB	= $(TARGET)-ranlib
+DEBUG	= $(TARGET)-gdb
 CCPATH	= /home/maarten.in_t.hout/riscv-build
 
 PROG	= riscv-spike
-CRT0	= arch/boot.S
+CRT0	= arch/boot.S arch/mutex.S
 
 FREERTOS_SOURCE_DIR	= ../../Source
 CUNIT	= ../../../cunit

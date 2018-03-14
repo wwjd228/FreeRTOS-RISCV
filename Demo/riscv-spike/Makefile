@@ -149,4 +149,11 @@ force_true:
 sim: all
 	spike $(PROG).elf
 
+spike:
+	spike --rbb-port=9824 -m0x80000000:0x400000 $(PROG).elf
 
+openocd:
+	openocd -f /home/junglec/shareFolder/openocd_spike.cfg
+
+debug:
+	$(DEBUG) $(PROG).elf

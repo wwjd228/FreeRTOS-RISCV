@@ -109,9 +109,15 @@ equivalent in ticks using the portTICK_PERIOD_MS constant. */
 
 /* A block time of zero simply means "don't block". */
 #define mainDONT_BLOCK						( 0UL )
+#define UMODE	0x80
+#define MMODE	0x1880
+#define USERTASK_EN	0
 
 /*-----------------------------------------------------------*/
 
+extern void lock_mutex( unsigned int* );
+extern void unlock_mutex( unsigned int* );
+extern void switch_to_user( long long );
 /*
  * The check timer callback function, as described at the top of this file.
  */
@@ -131,8 +137,32 @@ void vApplicationIdleHook( void );
  * FreeRTOS hook for when a stackoverflow occurs, enable in FreeRTOSConfig.
  */
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName );
-
 /*-----------------------------------------------------------*/
+
+volatile int wait_for_debugger= 1;
+unsigned int mutexlock = 0;
+
+/*
+ * Jungle create concurrency tasks.
+ */
+#if USERTASK_EN
+void user_task( void *task )
+{
+    int *num = (int *)task;
+    while(1) {
+	printf("User Task %d created.\n", *num);
+	lock_mutex(&mutexlock);
+	unsigned long i = 0;
+	printf("\n Job in user task %d started\n", *num);
+
+	for (i = 0; i < (0xFFFFF); i++);
+
+	printf("\n Job in user task %d finished\n", *num);
+	unlock_mutex(&mutexlock);
+	vTaskDelay(1000);
+    }
+}
+#endif
 
 int main( void )
 {
@@ -143,6 +173,13 @@ TimerHandle_t xCheckTimer = NULL;
 	vCreateBlockTimeTasks();
 	vStartCountingSemaphoreTasks();
 	vStartRecursiveMutexTasks();
+
+	printf("Hi Jungle! Welcome to FreeRTOS! \r\n");
+
+	// Switch to user mode.
+//	switch_to_user(UMODE);
+//	while(1)
+//	    for (int i = 0 ; i < 0xFFFFFFF ; i++);
 
 	/* Create the software timer that performs the 'check' functionality,
 	as described at the top of this file. */
@@ -161,8 +198,12 @@ TimerHandle_t xCheckTimer = NULL;
 	{
 		xTimerStart( xCheckTimer, mainDONT_BLOCK );
 	}
-
-
+#if USERTASK_EN
+	int t = 1;
+	xTaskCreate( user_task, "userTask1", ( unsigned short )512, ( void * ) &t, ( tskIDLE_PRIORITY | portPRIVILEGE_BIT ) + 2, NULL );
+	int t2 = 2;
+	xTaskCreate( user_task, "userTask2", ( unsigned short )512, ( void * ) &t2, ( tskIDLE_PRIORITY | portPRIVILEGE_BIT ) + 2, NULL );
+#endif
 	/* Start the kernel.  From here on, only tasks and interrupts will run. */
 	vTaskStartScheduler();
 

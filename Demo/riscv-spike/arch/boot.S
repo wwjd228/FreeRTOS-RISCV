@@ -82,6 +82,13 @@
 # define REGBYTES 4
 #endif
 
+spin_forever:
+.global wait_for_debugger
+    ld t0, wait_for_debugger
+    bnez t0, spin_forever
+    nop
+    ret
+
 boot:
     li t6, 0x1800
     csrw mstatus, t6
@@ -92,6 +99,7 @@ boot:
 	.globl _mstart
 /* Startup code */
 _mstart:
+    jal spin_forever
     la t0, trap_entry
     csrw mtvec, t0
     li	x1, 0
@@ -153,7 +161,6 @@ write_stack_pattern:
 init_stack:
     /* set stack pointer */
     la	sp, _stack
-
 	j	vSyscallInit
 
 /* When trap is an interrupt, this function is called */
