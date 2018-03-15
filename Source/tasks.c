@@ -1674,7 +1674,9 @@ BaseType_t xAlreadyYielded = pdFALSE;
 	/* If uxSchedulerSuspended is zero then this function does not match a
 	previous call to vTaskSuspendAll(). */
 	configASSERT( uxSchedulerSuspended );
-
+#if RUN_IN_USER_MODE
+	return pdPASS;
+#endif
 	/* It is possible that an ISR caused a task to be removed from an event
 	list while the scheduler was suspended.  If this was the case then the
 	removed task will have been added to the xPendingReadyList.  Once the
@@ -1762,14 +1764,14 @@ BaseType_t xAlreadyYielded = pdFALSE;
 TickType_t xTaskGetTickCount( void )
 {
 TickType_t xTicks;
-
+#if !RUN_IN_USER_MODE
 	/* Critical section required if running on a 16 bit processor. */
 	portTICK_TYPE_ENTER_CRITICAL();
 	{
 		xTicks = xTickCount;
 	}
 	portTICK_TYPE_EXIT_CRITICAL();
-
+#endif
 	return xTicks;
 }
 /*-----------------------------------------------------------*/

@@ -833,3 +833,4 @@ point support. */
 
 #endif /* INC_FREERTOS_H */
 
+#define RUN_IN_USER_MODE 0

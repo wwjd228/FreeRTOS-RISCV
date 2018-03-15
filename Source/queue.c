@@ -1366,7 +1366,9 @@ BaseType_t xEntryTimeSet = pdFALSE;
 TimeOut_t xTimeOut;
 int8_t *pcOriginalReadPosition;
 Queue_t * const pxQueue = ( Queue_t * ) xQueue;
-
+#if RUN_IN_USER_MODE
+	return pdPASS;
+#endif
 	configASSERT( pxQueue );
 	configASSERT( !( ( pvBuffer == NULL ) && ( pxQueue->uxItemSize != ( UBaseType_t ) 0U ) ) );
 	#if ( ( INCLUDE_xTaskGetSchedulerState == 1 ) || ( configUSE_TIMERS == 1 ) )
@@ -2401,7 +2403,7 @@ BaseType_t xReturn;
 	void vQueueWaitForMessageRestricted( QueueHandle_t xQueue, TickType_t xTicksToWait, const BaseType_t xWaitIndefinitely )
 	{
 	Queue_t * const pxQueue = ( Queue_t * ) xQueue;
-
+#if !RUN_IN_USER_MODE
 		/* This function should not be called by application code hence the
 		'Restricted' in its name.  It is not part of the public API.  It is
 		designed for use by kernel code, and has special calling requirements.
@@ -2427,6 +2429,7 @@ BaseType_t xReturn;
 			mtCOVERAGE_TEST_MARKER();
 		}
 		prvUnlockQueue( pxQueue );
+#endif
 	}
 
 #endif /* configUSE_TIMERS */
