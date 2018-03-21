@@ -117,7 +117,7 @@ equivalent in ticks using the portTICK_PERIOD_MS constant. */
 
 extern void lock_mutex( unsigned int* );
 extern void unlock_mutex( unsigned int* );
-extern void switch_to_user( long long );
+extern long long get_mstatus( void );
 /*
  * The check timer callback function, as described at the top of this file.
  */
@@ -151,6 +151,8 @@ void user_task( void *task )
     int *num = (int *)task;
 
     printf("User Task %d created.\n", *num);
+    long long status = get_mstatus();
+    printf("mstatus = 0x%llx\n", status);
     while(1) {
 	lock_mutex(&mutexlock);
 	unsigned long i = 0;

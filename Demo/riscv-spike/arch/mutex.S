@@ -29,10 +29,10 @@ unlock_mutex:
 
 	.size		unlock_mutex, .-unlock_mutex
 
-	.global	switch_to_user
-	.type	switch_to_user, @function
-switch_to_user:
-	csrw		mstatus, a0
-	mret
+	.global	get_mstatus
+	.type	get_mstatus, @function
+get_mstatus:
+	csrr		a0, mstatus
+	ret
 
-	.size		switch_to_user, .-switch_to_user
+	.size		get_mstatus, .-get_mstatus
