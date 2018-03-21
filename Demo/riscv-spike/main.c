@@ -178,12 +178,6 @@ TimerHandle_t xCheckTimer = NULL;
 	vStartRecursiveMutexTasks();
 
 	printf("Hi Jungle! Welcome to FreeRTOS! \r\n");
-#if 0
-	// Switch to user mode.
-	switch_to_user(UMODE);
-	while(1)
-	    for (int i = 0 ; i < 0xFFFFFFF ; i++);
-#endif
 #if !USERTASK_EN
 	/* Create the software timer that performs the 'check' functionality,
 	as described at the top of this file. */
